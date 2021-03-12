@@ -78,7 +78,8 @@ class FactorInceptionA(nn.Module):
 
 class FactorInceptionB(nn.Module):
     """ An implementation of the Factorized Inception blocks described in Figure 6 
-        of the paper "Rethinking the Inception Architecture for Computer Vision" """
+        of the paper "Rethinking the Inception Architecture for Computer Vision" 
+        padding configuration currently somewhat... Problematic?"""
     def __init__(self, dim_in, dim_1, dims_3, dims_5, dim_pool, n):
         super().__init__()
         # 1x1 Convolution Path
@@ -86,15 +87,15 @@ class FactorInceptionB(nn.Module):
         
         # nxn Convolution Path
         self.redu2 = nn.Conv2d(dim_in, dims_3[0], kernel_size=1, stride=1)
-        self.conv1 = nn.Conv2d(dims_3[0], dims_3[1], kernel_size=(1,n), stride=1, padding=1, padding_mode='reflect')
-        self.conv2 = nn.Conv2d(dims_3[0], dims_3[1], kernel_size=(n,1), stride=1, padding=1, padding_mode='reflect')
+        self.conv1 = nn.Conv2d(dims_3[0], dims_3[1], kernel_size=(1,n), stride=1, padding=(0,3), padding_mode='reflect')
+        self.conv2 = nn.Conv2d(dims_3[1], dims_3[1], kernel_size=(n,1), stride=1, padding=(3,0), padding_mode='reflect')
         
         # ?x? Convolution Path
         self.redu3 = nn.Conv2d(dim_in, dims_5[0], kernel_size=1, stride=1)
-        self.conv3 = nn.Conv2d(dims_3[0], dims_3[1], kernel_size=(1,n), stride=1, padding=1, padding_mode='reflect')
-        self.conv4 = nn.Conv2d(dims_3[1], dims_3[1], kernel_size=(n,1), stride=1, padding=1, padding_mode='reflect')
-        self.conv5 = nn.Conv2d(dims_3[1], dims_3[1], kernel_size=(1,n), stride=1, padding=1, padding_mode='reflect')
-        self.conv6 = nn.Conv2d(dims_3[1], dims_3[1], kernel_size=(n,1), stride=1, padding=1, padding_mode='reflect')
+        self.conv3 = nn.Conv2d(dims_3[0], dims_3[1], kernel_size=(1,n), stride=1, padding=(0,3), padding_mode='reflect')
+        self.conv4 = nn.Conv2d(dims_3[1], dims_3[1], kernel_size=(n,1), stride=1, padding=(3,0), padding_mode='reflect')
+        self.conv5 = nn.Conv2d(dims_3[1], dims_3[1], kernel_size=(1,n), stride=1, padding=(0,3), padding_mode='reflect')
+        self.conv6 = nn.Conv2d(dims_3[1], dims_3[1], kernel_size=(n,1), stride=1, padding=(3,0), padding_mode='reflect')
         
         # Max-Pool Pat
         self.pool  = nn.MaxPool2d(3,1, padding=1)
@@ -133,14 +134,14 @@ class FactorInceptionC(nn.Module):
         self.redu1 = nn.Conv2d(dim_in, dim_1, kernel_size=1, stride=1) 
         # 3x3 Convolution Path 
         self.redu3 = nn.Conv2d(dim_in, dims_3[0], kernel_size=1, stride=1)
-        self.conv1 = nn.Conv2d(dims_3[0], dims_3[1]//2, kernel_size=(1,3), stride=1, padding=1, padding_mode='reflect')
-        self.conv2 = nn.Conv2d(dims_3[0], dims_3[1]//2, kernel_size=(3,1), stride=1, padding=1, padding_mode='reflect')
+        self.conv1 = nn.Conv2d(dims_3[0], dims_3[1]//2, kernel_size=(1,3), stride=1, padding=(0,1), padding_mode='reflect')
+        self.conv2 = nn.Conv2d(dims_3[0], dims_3[1]//2, kernel_size=(3,1), stride=1, padding=(1,0), padding_mode='reflect')
         # 5x5 Convolution Path
         
         self.redu2 = nn.Conv2d(dim_in, dims_5[0], kernel_size=1, stride=1)
         self.conv3 = nn.Conv2d(dims_5[0], dims_5[1], kernel_size=3, stride=1, padding=1, padding_mode='reflect')
-        self.conv4 = nn.Conv2d(dims_5[1], dims_5[1]//2, kernel_size=(1,3), stride=1, padding=1, padding_mode='reflect')
-        self.conv5 = nn.Conv2d(dims_5[1], dims_5[1]//2, kernel_size=(3,1), stride=1, padding=1, padding_mode='reflect')
+        self.conv4 = nn.Conv2d(dims_5[1], dims_5[1]//2, kernel_size=(1,3), stride=1, padding=(0,1), padding_mode='reflect')
+        self.conv5 = nn.Conv2d(dims_5[1], dims_5[1]//2, kernel_size=(3,1), stride=1, padding=(1,0), padding_mode='reflect')
         # Max-Pool Pat
         self.pool  = nn.MaxPool2d(3,1, padding=1)
         self.redu4 = nn.Conv2d(dim_in, dim_pool, kernel_size=1,stride=1)
